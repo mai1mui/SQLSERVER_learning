@@ -1,0 +1,82 @@
+### **Các nhóm lệnh trong chỉ định FILEGROUP trong SQL Server**  
+
+SQL Server hỗ trợ **3 nhóm lệnh chính** để làm việc với **FILEGROUP**, mỗi nhóm có cách sử dụng và mục đích khác nhau:
+
+---
+
+## **1. Nhóm lệnh tạo FILEGROUP khi tạo database**  
+### **Cú pháp:**  
+```sql
+CREATE DATABASE db_name
+ON PRIMARY
+(
+    NAME = main_file,  
+    FILENAME = 'path\main_file.mdf',  
+    SIZE = 10MB,  
+    MAXSIZE = 100MB,  
+    FILEGROWTH = 5MB
+),
+FILEGROUP filegroup_name
+(
+    NAME = secondary_file,  
+    FILENAME = 'path\secondary_file.ndf',  
+    SIZE = 10MB,  
+    MAXSIZE = 100MB,  
+    FILEGROWTH = 5MB
+)
+LOG ON
+(
+    NAME = log_file,  
+    FILENAME = 'path\log.ldf',  
+    SIZE = 5MB,  
+    MAXSIZE = 50MB,  
+    FILEGROWTH = 5MB
+);
+```
+**📌 Điểm đặc biệt:**  
+- Dùng khi tạo database, giúp phân chia dữ liệu ngay từ đầu.  
+- **`PRIMARY`**: Filegroup mặc định, chứa metadata và file chính (`.mdf`).  
+- **`FILEGROUP filegroup_name`**: Chứa các file `.ndf`, dùng để lưu trữ dữ liệu riêng.  
+- **`LOG ON`**: Chứa file `.ldf`, dùng để lưu thông tin giao dịch.  
+
+---
+
+## **2. Nhóm lệnh thêm FILEGROUP vào database đã có**  
+### **Cú pháp:**  
+```sql
+ALTER DATABASE db_name
+ADD FILEGROUP filegroup_name;
+```
+**📌 Điểm đặc biệt:**  
+- Dùng khi cần thêm filegroup mới vào một database đã tồn tại.  
+- Không cần tạo lại database từ đầu.  
+
+---
+
+## **3. Nhóm lệnh thêm FILE vào FILEGROUP**  
+### **Cú pháp:**  
+```sql
+ALTER DATABASE db_name
+ADD FILE
+(
+    NAME = file_name,
+    FILENAME = 'path\file.ndf',
+    SIZE = 10MB,
+    MAXSIZE = 100MB,
+    FILEGROWTH = 10MB
+) TO FILEGROUP filegroup_name;
+```
+**📌 Điểm đặc biệt:**  
+- Dùng để thêm tệp `.ndf` vào **filegroup** đã có.  
+- Giúp database mở rộng dung lượng mà không ảnh hưởng đến các file khác.  
+
+---
+
+### **So sánh nhanh giữa các nhóm lệnh FILEGROUP**  
+| Nhóm lệnh | Mục đích | Khi nào sử dụng? |  
+|-----------|---------|----------------|  
+| **Tạo FILEGROUP khi tạo DB** | Tạo database mới có filegroup ngay từ đầu | Khi khởi tạo database mới |  
+| **Thêm FILEGROUP vào database đã có** | Mở rộng database bằng cách thêm nhóm tệp | Khi cần phân tách dữ liệu nhưng không muốn tạo lại DB |  
+| **Thêm FILE vào FILEGROUP** | Thêm file `.ndf` vào một filegroup hiện tại | Khi cần tăng dung lượng lưu trữ của một filegroup |  
+
+Bạn có cần hướng dẫn thực hành cụ thể hơn không? 😊
