@@ -1,0 +1,23 @@
+
+
+### **Cách 1: Sử dụng Database Diagram trong SSMS**  
+1. **Mở SQL Server Management Studio (SSMS)**  
+2. **Chọn Database cần vẽ ERD**  
+   - Trong **Object Explorer**, mở **Databases**, chọn database bạn muốn vẽ ERD.  
+3. **Tạo Database Diagram**  
+   - Nhấp chuột phải vào **Database Diagrams** > Chọn **New Database Diagram**.  
+4. **Thêm bảng vào sơ đồ**  
+   - Chọn các bảng cần thêm vào ERD, nhấn **Add**.  
+5. **Xem và chỉnh sửa quan hệ**  
+   - SSMS sẽ tự động hiển thị quan hệ giữa các bảng nếu có **FOREIGN KEY**.  
+   - Bạn có thể kéo thả để sắp xếp sơ đồ.  
+6. **Lưu sơ đồ**  
+   - Nhấn **Ctrl + S** để lưu sơ đồ vào database.  
+
+---
+
+### **Cách 2: Dùng công cụ bên ngoài kết nối SQL Server**  
+Nếu **SSMS không hỗ trợ Database Diagram**, bạn có thể dùng:  
+✅ **MySQL Workbench**  
+✅ **dbdiagram.io** (nhập SQL script để tạo ERD tự động)  
+✅ **Microsoft Visio**  

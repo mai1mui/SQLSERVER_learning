@@ -1,0 +1,49 @@
+### **🔹 Sự khác nhau giữa `NVARCHAR` và `VARCHAR` trong SQL Server**  
+
+| Đặc điểm         | `VARCHAR`                         | `NVARCHAR`                         |
+|-----------------|--------------------------------|--------------------------------|
+| **Lưu trữ ký tự** | Chỉ hỗ trợ **ký tự ASCII** (1 byte/char) | Hỗ trợ **Unicode (UTF-16)** (2 byte/char) |
+| **Dùng cho ngôn ngữ** | Chỉ phù hợp với tiếng Anh hoặc ngôn ngữ Latin | Hỗ trợ tiếng Việt, Trung, Nhật, Hàn... |
+| **Cách khai báo** | `VARCHAR(50)` (50 ký tự ASCII) | `NVARCHAR(50)` (50 ký tự Unicode) |
+| **Tiền tố khi nhập giá trị** | Không cần `N'...'` | **Cần `N'...'`** khi lưu Unicode |
+| **Dung lượng lưu trữ** | Ít hơn (1 byte/ký tự ASCII) | Gấp đôi (2 byte/ký tự Unicode) |
+| **Tốc độ xử lý** | Nhanh hơn do tốn ít bộ nhớ | Chậm hơn do cần xử lý Unicode |
+| **Khi nào dùng?** | Khi chỉ lưu tiếng Anh hoặc ASCII | Khi cần lưu Unicode (tiếng Việt, Trung, Nhật...) |
+
+---
+
+### **📌 Ví dụ minh họa**
+#### **1️⃣ `VARCHAR` (Không hỗ trợ Unicode)**
+```sql
+CREATE TABLE Test_VARCHAR (
+    Name VARCHAR(50)
+);
+
+INSERT INTO Test_VARCHAR VALUES ('Tiếng Việt');  -- ❌ Lưu sai do không hỗ trợ Unicode
+SELECT * FROM Test_VARCHAR;
+```
+👉 Kết quả: `"Tiếng Việt"` có thể bị lỗi hoặc hiển thị ký tự lạ.
+
+---
+
+#### **2️⃣ `NVARCHAR` (Hỗ trợ Unicode)**
+```sql
+CREATE TABLE Test_NVARCHAR (
+    Name NVARCHAR(50)
+);
+
+INSERT INTO Test_NVARCHAR VALUES (N'Tiếng Việt');  -- ✅ Đúng, có tiền tố `N`
+SELECT * FROM Test_NVARCHAR;
+```
+👉 Kết quả: `"Tiếng Việt"` hiển thị đúng.
+
+---
+
+### **🔹 Khi nào dùng `NVARCHAR` thay vì `VARCHAR`?**  
+✅ Khi **cần lưu trữ Unicode** (chữ có dấu như **tiếng Việt, tiếng Trung, tiếng Nhật**...)  
+✅ Khi dữ liệu sẽ được hiển thị trên nhiều hệ thống hoặc ứng dụng đa ngôn ngữ.  
+
+🚀 **Tóm lại:**  
+- Nếu chỉ dùng tiếng Anh **→ `VARCHAR` (nhẹ, nhanh hơn)**  
+- Nếu dùng tiếng Việt hoặc Unicode **→ `NVARCHAR` (chính xác, tránh lỗi mã hóa)**  
+

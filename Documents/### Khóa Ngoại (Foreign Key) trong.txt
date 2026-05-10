@@ -1,0 +1,84 @@
+### **Khóa Ngoại (Foreign Key) trong Cơ Sở Dữ Liệu**
+
+**Khóa ngoại (Foreign Key)** là một loại ràng buộc (constraint) trong cơ sở dữ liệu quan hệ (relational database), dùng để tạo ra mối quan hệ giữa các bảng. Nó là một trường (hoặc một tập hợp các trường) trong một bảng, tham chiếu đến khóa chính (primary key) của bảng khác.
+
+### **Mục Đích của Khóa Ngoại**
+- **Liên kết dữ liệu giữa các bảng**: Khóa ngoại cho phép chúng ta liên kết các bảng trong cơ sở dữ liệu. Thông qua khóa ngoại, chúng ta có thể tham chiếu đến dữ liệu trong bảng khác, tạo mối quan hệ giữa các bảng mà không cần phải lặp lại thông tin.
+- **Đảm bảo tính toàn vẹn dữ liệu**: Khóa ngoại giúp duy trì tính toàn vẹn tham chiếu trong cơ sở dữ liệu. Điều này có nghĩa là mọi giá trị trong cột khóa ngoại phải có sự tương ứng với giá trị tồn tại trong cột khóa chính của bảng tham chiếu. Việc này giúp tránh các dữ liệu mồ côi hoặc không hợp lệ.
+
+### **Các Kiểu Quan Hệ Giữa Các Bảng**
+Có thể có nhiều loại quan hệ khác nhau giữa các bảng trong cơ sở dữ liệu, ví dụ như:
+1. **Quan hệ Một-Một (One-to-One)**: Mỗi bản ghi trong bảng A chỉ tương ứng với một bản ghi trong bảng B và ngược lại.
+2. **Quan hệ Một-Nhiều (One-to-Many)**: Một bản ghi trong bảng A có thể tương ứng với nhiều bản ghi trong bảng B, nhưng mỗi bản ghi trong bảng B chỉ tương ứng với một bản ghi trong bảng A.
+3. **Quan hệ Nhiều-Nhiều (Many-to-Many)**: Nhiều bản ghi trong bảng A có thể tương ứng với nhiều bản ghi trong bảng B và ngược lại.
+
+### **Cách Thức Hoạt Động Của Khóa Ngoại**
+1. **Khóa Ngoại trong bảng con**: Khóa ngoại sẽ được định nghĩa trong bảng con (hoặc bảng "bên nhiều" trong quan hệ một-nhiều). Cột khóa ngoại sẽ tham chiếu đến khóa chính trong bảng chính (hoặc bảng "bên một" trong quan hệ một-nhiều).
+2. **Tính toàn vẹn tham chiếu**: Khóa ngoại đảm bảo rằng bất kỳ giá trị nào trong cột khóa ngoại đều phải tồn tại trong cột khóa chính của bảng chính. Nếu có bất kỳ giá trị nào trong khóa ngoại không khớp với khóa chính của bảng tham chiếu, hệ thống cơ sở dữ liệu sẽ từ chối thao tác (như thêm hoặc cập nhật) để đảm bảo tính toàn vẹn.
+
+### **Ví Dụ Về Khóa Ngoại**
+
+Giả sử chúng ta có hai bảng: **Bảng `Customers`** và **Bảng `Orders`**. Mối quan hệ giữa chúng là: mỗi khách hàng có thể có nhiều đơn hàng, nhưng mỗi đơn hàng chỉ thuộc về một khách hàng.
+
+- **Bảng `Customers`** có cột `CustomerID` là khóa chính.
+- **Bảng `Orders`** có cột `OrderID` là khóa chính và cột `CustomerID` là khóa ngoại tham chiếu đến cột `CustomerID` trong bảng `Customers`.
+
+### **Câu Lệnh Tạo Bảng với Khóa Ngoại**
+```sql
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    CustomerName NVARCHAR(100)
+);
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    OrderDate DATE,
+    CustomerID INT,
+    CONSTRAINT FK_Customer FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+```
+
+Trong ví dụ trên:
+- `CustomerID` trong bảng `Orders` là khóa ngoại, tham chiếu đến `CustomerID` trong bảng `Customers`.
+- Mỗi giá trị trong cột `CustomerID` của bảng `Orders` phải tồn tại trong cột `CustomerID` của bảng `Customers`.
+
+### **Các Quy Tắc Liên Quan đến Khóa Ngoại**
+1. **Tính Toàn Vẹn Tham Chiếu**: Khi một khóa ngoại được định nghĩa, cơ sở dữ liệu sẽ thực hiện kiểm tra tính hợp lệ giữa khóa ngoại và khóa chính khi thực hiện thao tác như thêm, sửa, hoặc xóa.
+   
+2. **Các Hành Động Khi Xóa hoặc Cập Nhật**:
+   - **ON DELETE CASCADE**: Khi một bản ghi trong bảng cha bị xóa, tất cả các bản ghi liên quan trong bảng con sẽ bị xóa theo.
+   - **ON UPDATE CASCADE**: Khi giá trị khóa chính trong bảng cha thay đổi, giá trị khóa ngoại trong bảng con sẽ được cập nhật tự động.
+   - **ON DELETE SET NULL**: Khi một bản ghi trong bảng cha bị xóa, giá trị khóa ngoại trong bảng con sẽ được đặt thành NULL.
+   - **ON UPDATE SET NULL**: Khi giá trị khóa chính trong bảng cha thay đổi, giá trị khóa ngoại trong bảng con sẽ được đặt thành NULL.
+   - **ON DELETE RESTRICT**: Không cho phép xóa bản ghi trong bảng cha nếu bảng con vẫn còn tham chiếu đến nó.
+   - **ON UPDATE RESTRICT**: Không cho phép cập nhật giá trị khóa chính nếu bảng con vẫn còn tham chiếu đến nó.
+
+### **Ví Dụ với Các Hành Động Khi Xóa hoặc Cập Nhật**
+```sql
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    OrderDate DATE,
+    CustomerID INT,
+    CONSTRAINT FK_Customer FOREIGN KEY (CustomerID)
+        REFERENCES Customers(CustomerID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+```
+Trong ví dụ trên:
+- **`ON DELETE CASCADE`**: Nếu một khách hàng bị xóa khỏi bảng `Customers`, tất cả các đơn hàng của khách hàng đó trong bảng `Orders` sẽ bị xóa tự động.
+- **`ON UPDATE CASCADE`**: Nếu `CustomerID` trong bảng `Customers` thay đổi, các giá trị `CustomerID` tương ứng trong bảng `Orders` cũng sẽ được cập nhật tự động.
+
+### **Ưu Điểm và Nhược Điểm của Khóa Ngoại**
+
+#### Ưu Điểm:
+1. **Bảo vệ tính toàn vẹn dữ liệu**: Khóa ngoại đảm bảo rằng dữ liệu trong các bảng luôn nhất quán, tránh dữ liệu mồ côi.
+2. **Giảm thiểu lỗi**: Việc sử dụng khóa ngoại giảm thiểu khả năng phát sinh lỗi do dữ liệu không chính xác hoặc không tồn tại.
+3. **Dễ dàng duy trì mối quan hệ giữa các bảng**: Nó giúp dễ dàng tạo và quản lý các mối quan hệ giữa các bảng trong cơ sở dữ liệu.
+   
+#### Nhược Điểm:
+1. **Tác động đến hiệu suất**: Việc kiểm tra và duy trì tính toàn vẹn tham chiếu có thể làm giảm hiệu suất trong các hệ thống có lượng dữ liệu lớn hoặc khi thực hiện các thao tác xóa và cập nhật dữ liệu nhiều.
+2. **Phức tạp hơn khi xóa hoặc cập nhật**: Đối với các quan hệ phức tạp, việc quản lý các hành động liên quan đến xóa hoặc cập nhật có thể trở nên khó khăn.
+
+### **Tổng Kết**
+Khóa ngoại là một phần quan trọng trong thiết kế cơ sở dữ liệu, giúp tạo mối quan hệ giữa các bảng và bảo vệ tính toàn vẹn của dữ liệu. Việc sử dụng khóa ngoại không chỉ giúp tổ chức cơ sở dữ liệu dễ dàng và hiệu quả hơn mà còn giúp tránh các lỗi liên quan đến dữ liệu không chính xác hoặc không hợp lệ.
